@@ -55,6 +55,12 @@ namespace DownloadManager.Sample
 						Sync();
 
 					}),
+					new StringElement ("Add 500", async delegate {
+						string url = string.Format(templateurl, 404);
+						_downloader.Queue (url);
+						Sync();
+
+					}),
 					new StringElement ("Reset", async delegate {
 						await _downloader.Reset();
 						Sync();
