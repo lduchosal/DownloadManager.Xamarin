@@ -1,0 +1,77 @@
+﻿<Properties StartupItem="DownloadManager.Sample/DownloadManager.Sample.csproj" RefactoringSettings.EnableRefactorings="True">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6.9.2" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="DownloadManager.Sample/AppDelegate.cs">
+    <Files>
+      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadFinished.cs" Line="121" Column="48" />
+      <File FileName="DownloadManager.Sample/Main.cs" Line="1" Column="1" />
+      <File FileName="MessageBus/InProcessBus.cs" Line="65" Column="1" />
+      <File FileName="MessageBus/Common/Ensure.cs" Line="184" Column="1" />
+      <File FileName="MessageBus/SendMessageRequest.cs" Line="19" Column="1" />
+      <File FileName="MessageBus/Subscription.cs" Line="23" Column="1" />
+      <File FileName="DownloadManager.Sample/AppDelegate.cs" Line="32" Column="70" />
+      <File FileName="DownloadManager.iOS/NSUrlSessionManager.cs" Line="223" Column="1" />
+      <File FileName="DownloadManager.iOS/Downloader.cs" Line="67" Column="68" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_FreeSlot.cs" Line="319" Column="1" />
+      <File FileName="DownloadManager.Test/Mock/DownloadRepositoryMock.cs" Line="35" Column="8" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_QueueUrl.cs" Line="60" Column="18" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_ProgressDownload.cs" Line="21" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadRejected.cs" Line="14" Column="1" />
+      <File FileName="DownloadManager.TestRunner/AppDelegate.cs" Line="34" Column="3" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadError.cs" Line="150" Column="3" />
+      <File FileName="DownloadManager.iOS/DownloadManager.cs" Line="213" Column="1" />
+      <File FileName="DownloadManager.iOS/Data/DownloadRepository.cs" Line="49" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="DownloadManager" expanded="True">
+            <Node name="DownloadManager.iOS" expanded="True">
+              <Node name="Bo" expanded="True" />
+              <Node name="Data" expanded="True" />
+            </Node>
+            <Node name="DownloadManager.Sample" expanded="True">
+              <Node name="AppDelegate.cs" selected="True" />
+            </Node>
+            <Node name="DownloadManager.Test" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="DownloadManager" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="291" column="12" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="236" column="1" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="246" column="59" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="241" column="1" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="251" column="65" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="296" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Api/CollectionApi.cs" line="155" offsetX="285" offsetY="2310" expression="collections" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Data/PokemonDatasource.cs" line="55" offsetX="517" offsetY="810" expression="carddypeid" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Data/PokemonDatasource.cs" line="55" offsetX="517" offsetY="839" expression="collectionid" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Api/SerieApi.cs" line="24" offsetX="502" offsetY="345" expression="Pokeprice.Api.SerieData" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/CardViewController.cs" line="111" offsetX="546" offsetY="1650" expression="pinch.State" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/CardViewController.cs" line="110" offsetX="532" offsetY="1617" expression="pinch.NumberOfTouches" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/CollectionViewController.cs" line="215" offsetX="473" offsetY="3210" expression="collection" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/CollectionViewController.cs" line="215" offsetX="473" offsetY="3235" expression="collection.Name" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/ImageSync.cs" line="223" offsetX="387" offsetY="3330" expression="taskid.Id" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/ImageSync.cs" line="239" offsetX="712" offsetY="3570" expression="taskid" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/DownloadManager.cs" line="35" offsetX="452" offsetY="510" expression="collectionid" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/ImageSync.cs" line="161" offsetX="726" offsetY="2400" expression="imageexists" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/ImageSync.cs" line="166" offsetX="741" offsetY="2475" expression="symbolexists" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/ImageSync.cs" line="161" offsetX="726" offsetY="2400" expression="collection.Symbol1" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Sync/ImageSync.cs" line="161" offsetX="739" offsetY="2443" expression="imageexists" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/CollectionViewController.cs" line="184" offsetX="387" offsetY="2745" expression="collection.Symbol1" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Ui/CollectionViewCell.cs" line="172" offsetX="965" offsetY="2565" expression="collectionname" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Business/Sync/DownloadManager.cs" line="276" offsetX="466" offsetY="4125" expression="taskid" liveUpdate="False" />
+    <Watch file="../Pokeprice/Iphone/Pokeprice/Business/Sync/DownloadManager.cs" line="259" offsetX="437" offsetY="3870" expression="taskid" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
+</Properties>
