@@ -25,11 +25,6 @@ namespace DownloadManager.iOS
 			set;
 		}
 
-		public int StatusCode {
-			get ;
-			set;
-		}
-
 	}
 
 	public enum ErrorEnum : int {
@@ -39,7 +34,7 @@ namespace DownloadManager.iOS
 		DidFinishDownloading_InvalidTaskId,
 		DidFinishDownloading_NullTaskId,
 		DidFinishDownloading_NullResponse,
-		DidFinishDownloading_ResponseError,
+		DidFinishDownloading_InvalidRedirect,
 
 		DidWriteData_NullTaskId,
 		DidWriteData_InvalidTaskId,
@@ -60,6 +55,9 @@ namespace DownloadManager.iOS
 
 		DownloadError_InvalidState,
 		DownloadError_IdentifierNotFound,
+
+		TaskError_InvalidState,
+		TaskError_IdentifierNotFound,
 
 		FreeSlot_InvalidState,
 

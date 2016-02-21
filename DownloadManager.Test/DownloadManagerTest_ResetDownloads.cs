@@ -17,6 +17,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ResetDownloads_Empty ()
 		{
+			Console.WriteLine ("Test_ResetDownloads_Empty");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -32,6 +34,9 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ResetDownloads_Single ()
 		{
+
+			Console.WriteLine ("Test_ResetDownloads_Single");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -50,6 +55,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ResetDownloads_Multiple ()
 		{
+			Console.WriteLine ("Test_ResetDownloads_Multiple");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -75,6 +82,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ResetDownloads_Multiple2 ()
 		{
+			Console.WriteLine ("Test_ResetDownloads_Multiple2");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);

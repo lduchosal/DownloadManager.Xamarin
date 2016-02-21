@@ -5,6 +5,7 @@ using System.Threading;
 using DownloadManager.iOS;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace DownloadManager.Test
 {
@@ -15,6 +16,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_FinishDownload_DownloadError1 ()
 		{
+			Console.WriteLine ("Test_FinishDownload_DownloadError1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -39,6 +42,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_FinishDownload_Finish1 ()
 		{
+			Console.WriteLine ("Test_FinishDownload_Finish1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -66,6 +71,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_FinishDownload_ErrorNotFound2 ()
 		{
+			Console.WriteLine ("Test_FinishDownload_ErrorNotFound2");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -96,6 +103,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_FinishDownload_ErrorInvalidState1 ()
 		{
+			Console.WriteLine ("Test_FinishDownload_ErrorInvalidState1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);

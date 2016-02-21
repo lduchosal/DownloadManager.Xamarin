@@ -1,6 +1,7 @@
 ﻿using DownloadManager.iOS.Bo;
 using System;
 using NUnit.Framework;
+using System.Diagnostics;
 
 namespace DownloadManager.Test
 {
@@ -11,6 +12,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Fail ()
 		{
+			Console.WriteLine ("Waiting_Fail");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -20,6 +23,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Resume ()
 		{
+			Console.WriteLine ("Waiting_Resume");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -29,6 +34,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Cancel ()
 		{
+			Console.WriteLine ("Waiting_Cancel");
+
 			var download = new Download ();
 			download.Cancel ();
 			Assert.AreEqual (State.Finished, download.State, "State");
@@ -40,6 +47,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Invalid1 ()
 		{
+			Console.WriteLine ("Waiting_Invalid1");
+
 			var download = new Download ();
 			bool paused = download.TryPause ();
 			Assert.AreEqual (false, paused, "Paused");
@@ -48,6 +57,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Invalid2 ()
 		{
+			Console.WriteLine ("Waiting_Invalid2");
+
 			var download = new Download ();
 			Assert.Throws<InvalidOperationException> (() => download.Retry ());
 		}
@@ -55,6 +66,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Invalid3 ()
 		{
+			Console.WriteLine ("Waiting_Invalid3");
+
 			var download = new Download ();
 			bool progressed = download.TryProgress (0, 0);
 			Assert.AreEqual (false, progressed, "Progressed");
@@ -63,6 +76,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Waiting_Invalid4 ()
 		{
+			Console.WriteLine ("Waiting_Invalid4");
+
 			var download = new Download ();
 			bool finished = download.TryFinish ("location");
 			Assert.AreEqual (false, finished, "Finished");
@@ -71,6 +86,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Downloading_Pause ()
 		{
+			Console.WriteLine ("Downloading_Pause");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -82,6 +99,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Downloading_Progress ()
 		{
+			Console.WriteLine ("Downloading_Progress");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -93,6 +112,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Downloading_Cancel ()
 		{
+			Console.WriteLine ("Downloading_Cancel");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -103,6 +124,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Downloading_Fail ()
 		{
+			Console.WriteLine ("Downloading_Fail");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -114,6 +137,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Downloading_Invalid1 ()
 		{
+			Console.WriteLine ("Downloading_Invalid1");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -123,6 +148,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Downloading_Invalid2 ()
 		{
+			Console.WriteLine ("Downloading_Invalid2");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -134,6 +161,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Retry ()
 		{
+			Console.WriteLine ("Error_Retry");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -144,6 +173,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Cancel ()
 		{
+			Console.WriteLine ("Error_Cancel");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -154,6 +185,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Fail ()
 		{
+			Console.WriteLine ("Error_Fail");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -166,6 +199,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Invalid1 ()
 		{
+			Console.WriteLine ("Error_Invalid1");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -176,6 +211,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Invalid2 ()
 		{
+			Console.WriteLine ("Error_Invalid2");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -186,6 +223,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Invalid3 ()
 		{
+			Console.WriteLine ("Error_Invalid3");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -196,6 +235,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Error_Invalid4 ()
 		{
+			Console.WriteLine ("Error_Invalid4");
+
 			var download = new Download ();
 			bool failed = download.TryFail (404);
 			Assert.AreEqual (true, failed, "Failed");
@@ -207,6 +248,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Finished_Invalid1 ()
 		{
+			Console.WriteLine ("Finished_Invalid1");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -220,6 +263,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Finished_Invalid2 ()
 		{
+			Console.WriteLine ("Finished_Invalid2");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -233,6 +278,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Finished_Invalid3 ()
 		{
+			Console.WriteLine ("Finished_Invalid3");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -247,6 +294,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Finished_Invalid4 ()
 		{
+			Console.WriteLine ("Finished_Invalid4");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -260,6 +309,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Finished_Invalid5 ()
 		{
+			Console.WriteLine ("Finished_Invalid5");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
@@ -273,6 +324,8 @@ namespace DownloadManager.Test
 		[Test]
 		public void Finished_Invalid6 ()
 		{
+			Console.WriteLine ("Finished_Invalid6");
+
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");

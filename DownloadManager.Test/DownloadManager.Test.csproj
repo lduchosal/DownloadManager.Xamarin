@@ -52,8 +52,10 @@
     <Compile Include="DownloadManagerTest_CancelDownloads.cs" />
     <Compile Include="DownloadManagerTest_ResetDownloads.cs" />
     <Compile Include="DownloadManagerTest_DownloadFinished.cs" />
-    <Compile Include="DownloadManagerTest_DownloadRejected.cs" />
     <Compile Include="DownloadManagerTest_DownloadError.cs" />
+    <Compile Include="DownloadManagerTest_QueueFull.cs" />
+    <Compile Include="DownloadManagerTest_TaskError.cs" />
+    <Compile Include="ProgressManagerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

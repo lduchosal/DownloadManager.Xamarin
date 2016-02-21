@@ -5,16 +5,26 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using DownloadManager.iOS.Bo;
+using Foundation;
+using System.Collections.Concurrent;
 
 namespace DownloadManager.iOS
 {
 	public class Downloader
 	{
 		
-		private NSUrlSessionManager _service;
-		private DownloadRepository _repository;
-		private DownloadManager _manager;
-		private InProcessBus _bus;
+		private readonly NSUrlSessionManager _service;
+		private readonly DownloadRepository _repository;
+		private readonly DownloadManager _manager;
+		private readonly InProcessBus _bus;
+		private readonly ProgressManager _progress;
+
+		public System.Action Completion {
+			set {
+				_manager.BackgroundCompletionHandler = value;
+			}
+		}
 
 		public Downloader ()
 		{
@@ -31,63 +41,110 @@ namespace DownloadManager.iOS
 				#endif
 			};
 
-			int maxdownloads = 3;
+			int maxdownloads = 50;
 			_bus = new InProcessBus ();
 			_repository = new DownloadRepository (db);
 			_manager = new DownloadManager (_bus, _repository, maxdownloads);
 			_service = new NSUrlSessionManager (_bus, maxdownloads);
+			_progress = new ProgressManager (_bus, _repository);
 
 			_bus.Subscribe<ProgressDownload> (ProgressDownload_Received);
+			_bus.Subscribe<FinishedDownload> (FinishedDownload_Received);
 			_bus.Subscribe<DownloadError> (DownloadError_Received);
+			_bus.Subscribe<TaskError> (TaskError_Received);
 			_bus.Subscribe<QueueEmpty> (QueueEmpty_Received);
+
 		}
 
-		public void ProgressDownload_Received(ProgressDownload progress) {
-			Trace.TraceInformation("[Downloader] ProgressDownload");
-			Trace.TraceInformation("[Downloader] ProgressDownload Id : {0}", progress.Id);
-			Trace.TraceInformation("[Downloader] ProgressDownload Total : {0}", progress.Total);
-			Trace.TraceInformation("[Downloader] ProgressDownload Written : {0}", progress.Written);
+		private void ProgressDownload_Received(ProgressDownload progress) {
+
+			Console.WriteLine("[Downloader] ProgressDownload");
+			Console.WriteLine("[Downloader] ProgressDownload Id : {0}", progress.Id);
+			Console.WriteLine("[Downloader] ProgressDownload Total : {0}", progress.Total);
+			Console.WriteLine("[Downloader] ProgressDownload Written : {0}", progress.Written);
+
+			Download download;
+			bool found = _repository.TryById (progress.Id, out download);
+			if (!found) {
+				return;
+			}
+
 		}
 
-		public void QueueEmpty_Received(QueueEmpty empty) {
-			Trace.TraceInformation ("[Downloader] QueueEmpty");
+		private void FinishedDownload_Received(FinishedDownload finished) {
+
+			Console.WriteLine("[Downloader] FinishedDownload");
+			Console.WriteLine("[Downloader] FinishedDownload Id : {0}", finished.Id);
+			Console.WriteLine("[Downloader] FinishedDownload Location : {0}", finished.Location);
+
 		}
 
-		public void QueueFull_Received(QueueFull full) {
-			Trace.TraceInformation ("[Downloader] QueueFull");
-			Trace.TraceInformation ("[Downloader] QueueFull MaxDownload : {0}", full.MaxDownload);
-			Trace.TraceInformation ("[Downloader] QueueFull Downloading : {0}", full.Downloading);
+		private void QueueEmpty_Received(QueueEmpty empty) {
+		
+			Console.WriteLine ("[Downloader] QueueEmpty");
+
 		}
 
-		public void DownloadError_Received(DownloadError error) {
-			Trace.TraceInformation("[Downloader] DownloadError");
-			Trace.TraceInformation("[Downloader] DownloadError Id : {0}", error.Id);
-			Trace.TraceInformation("[Downloader] DownloadError Error : {0}", error.Error);
-			Trace.TraceInformation("[Downloader] DownloadError Description : {0}", error.Description);
-			Trace.TraceInformation("[Downloader] DownloadError (State : {0})", error.State);
-		}
-
-		public async Task Queue (string url)
+		private void QueueFull_Received(QueueFull full) 
 		{
-			Trace.TraceInformation("[Downloader] Queue");
-			Trace.TraceInformation("[Downloader] Queue url : {0}", url);
+			Console.WriteLine ("[Downloader] QueueFull");
+			Console.WriteLine ("[Downloader] QueueFull MaxDownload : {0}", full.MaxDownload);
+			Console.WriteLine ("[Downloader] QueueFull Downloading : {0}", full.Downloading);
+		}
+
+		private void DownloadError_Received(DownloadError error) 
+		{
+			Console.WriteLine("[Downloader] DownloadError");
+			Console.WriteLine("[Downloader] DownloadError Error : {0}", error.Error);
+			Console.WriteLine("[Downloader] DownloadError Description : {0}", error.Description);
+			Console.WriteLine("[Downloader] DownloadError (State : {0})", error.State);
+
+
+		}
+
+		private void TaskError_Received(TaskError error) 
+		{
+			Console.WriteLine("[Downloader] TaskError");
+			Console.WriteLine("[Downloader] TaskError Id : {0}", error.Id);
+			Console.WriteLine("[Downloader] TaskError Error : {0}", error.Error);
+			Console.WriteLine("[Downloader] TaskError Description : {0}", error.Description);
+
+		}
+
+		public async Task<NSProgress> Queue (string url)
+		{
+			Console.WriteLine("[Downloader] Queue");
+			Console.WriteLine("[Downloader] Queue url : {0}", url);
 
 			await _bus.SendAsync<QueueUrl> (new QueueUrl {
 				Url = url
 			});
+
+			return _progress.Queue (url);
+
+		}
+
+
+		public void Run ()
+		{
+			Console.WriteLine("[Downloader] Run");
+			var task = _bus.SendAsync<CheckFreeSlot> (new CheckFreeSlot() {
+			});
+			task.RunSynchronously ();
 		}
 
 		public async Task Reset ()
 		{
-			Trace.TraceInformation("[Downloader] Reset");
+			Console.WriteLine("[Downloader] Reset");
 			await _bus.SendAsync<ResetDownloads> (new ResetDownloads {});
 		}
 
 		public List<Bo.Download> List ()
 		{
-			Trace.TraceInformation("[Downloader] List");
+			Console.WriteLine("[Downloader] List");
 			return _repository.All ();
 		}
+
 	}
 }
 

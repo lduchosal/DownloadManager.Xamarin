@@ -1,47 +1,21 @@
-﻿<Properties StartupItem="DownloadManager.Sample/DownloadManager.Sample.csproj" RefactoringSettings.EnableRefactorings="True">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6.9.2" />
+﻿<Properties StartupItem="DownloadManager.TestRunner/DownloadManager.TestRunner.csproj" RefactoringSettings.EnableRefactorings="True">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6s.9.2" />
   <MonoDevelop.Ide.Workbench ActiveDocument="DownloadManager.Sample/AppDelegate.cs">
     <Files>
-      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadFinished.cs" Line="121" Column="48" />
+      <File FileName="DownloadManager.iOS/NSUrlSessionManager.cs" Line="1" Column="1" />
       <File FileName="DownloadManager.Sample/Main.cs" Line="1" Column="1" />
-      <File FileName="MessageBus/InProcessBus.cs" Line="65" Column="1" />
-      <File FileName="MessageBus/Common/Ensure.cs" Line="184" Column="1" />
-      <File FileName="MessageBus/SendMessageRequest.cs" Line="19" Column="1" />
-      <File FileName="MessageBus/Subscription.cs" Line="23" Column="1" />
-      <File FileName="DownloadManager.Sample/AppDelegate.cs" Line="32" Column="70" />
-      <File FileName="DownloadManager.iOS/NSUrlSessionManager.cs" Line="223" Column="1" />
-      <File FileName="DownloadManager.iOS/Downloader.cs" Line="67" Column="68" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_FreeSlot.cs" Line="319" Column="1" />
-      <File FileName="DownloadManager.Test/Mock/DownloadRepositoryMock.cs" Line="35" Column="8" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_QueueUrl.cs" Line="60" Column="18" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_ProgressDownload.cs" Line="21" Column="1" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadRejected.cs" Line="14" Column="1" />
-      <File FileName="DownloadManager.TestRunner/AppDelegate.cs" Line="34" Column="3" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadError.cs" Line="150" Column="3" />
-      <File FileName="DownloadManager.iOS/DownloadManager.cs" Line="213" Column="1" />
-      <File FileName="DownloadManager.iOS/Data/DownloadRepository.cs" Line="49" Column="1" />
+      <File FileName="DownloadManager.iOS/Downloader.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.iOS/DownloadManager.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_TaskError.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_FreeSlot.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_CancelDownloads.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadError.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadFinished.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadTest.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/DownloadManagerTest_ProgressDownload.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.Test/ProgressManagerTest.cs" Line="54" Column="66" />
+      <File FileName="DownloadManager.Sample/AppDelegate.cs" Line="111" Column="20" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="DownloadManager" expanded="True">
-            <Node name="DownloadManager.iOS" expanded="True">
-              <Node name="Bo" expanded="True" />
-              <Node name="Data" expanded="True" />
-            </Node>
-            <Node name="DownloadManager.Sample" expanded="True">
-              <Node name="AppDelegate.cs" selected="True" />
-            </Node>
-            <Node name="DownloadManager.Test" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="DownloadManager" expanded="True" selected="True" />
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
@@ -51,6 +25,8 @@
       <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="241" column="1" />
       <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="251" column="65" />
       <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="296" column="1" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.iOS/NSUrlSessionManager.cs" line="243" column="1" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.Sample/AppDelegate.cs" line="27" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

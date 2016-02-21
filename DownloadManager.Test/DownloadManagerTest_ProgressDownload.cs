@@ -17,6 +17,9 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ProgressDownload_DownloadError1 ()
 		{
+
+			Console.WriteLine ("Test_ProgressDownload_DownloadError1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -44,6 +47,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ProgressDownload_Progress1 ()
 		{
+			Console.WriteLine ("Test_ProgressDownload_Progress1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -76,6 +81,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ProgressDownload_ErrorNotFound2 ()
 		{
+			Console.WriteLine ("Test_ProgressDownload_ErrorNotFound2");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -112,6 +119,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_ProgressDownload_ErrorInvalidState1 ()
 		{
+			Console.WriteLine ("Test_ProgressDownload_ErrorInvalidState1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);

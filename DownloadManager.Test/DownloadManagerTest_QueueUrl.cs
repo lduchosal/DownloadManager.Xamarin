@@ -16,6 +16,9 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_QueueUrl_CheckFreeSlot1 ()
 		{
+
+			Console.WriteLine ("Test_QueueUrl_CheckFreeSlot1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);
@@ -55,6 +58,8 @@ namespace DownloadManager.Test
 		[Test]
 		public async Task Test_QueueUrl_AlreadyQueued1 ()
 		{
+			Console.WriteLine ("Test_QueueUrl_AlreadyQueued1");
+
 			var bus = new InProcessBus ();
 			var repo = new DownloadRepositoryMock ();
 			var manager = new DownloadManager.iOS.DownloadManager (bus, repo, 3);

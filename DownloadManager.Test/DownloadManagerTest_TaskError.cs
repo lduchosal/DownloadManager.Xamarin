@@ -11,12 +11,13 @@ using System.Threading.Tasks;
 namespace DownloadManager.Test
 {
 	[TestFixture]
-	public class DownloadManagerTest_DownloadError
+	public class DownloadManagerTest_TaskError
 	{
 
 		[Test]
 		public async Task Test_DownloadError_Error1 ()
 		{
+
 			Console.WriteLine ("Test_DownloadError_Error1");
 
 			var bus = new InProcessBus ();
@@ -30,14 +31,14 @@ namespace DownloadManager.Test
 				wait1.Set();
 			});
 
-			manager.DownloadError (new DownloadError {
+			manager.TaskError (new TaskError {
 				Id = 0,
-				Error = ErrorEnum.Empty,
+				Error = TaskErrorEnum.Empty,
 			});
 
 			wait1.WaitOne (10);
 
-			Assert.AreEqual (ErrorEnum.Empty, error);
+			Assert.AreEqual (ErrorEnum.TaskError_IdentifierNotFound, error);
 
 		}
 
@@ -57,20 +58,21 @@ namespace DownloadManager.Test
 				wait1.Set();
 			});
 
-			manager.DownloadError (new DownloadError {
+			manager.TaskError (new TaskError {
 				Id = 0,
-				Error = ErrorEnum.DidCompleteWithError_Error,
+				Error = TaskErrorEnum.InvalidResponse,
 			});
 
-			wait1.WaitOne (10);
+			wait1.WaitOne ();
 
-			Assert.AreEqual (ErrorEnum.Empty, error);
+			Assert.AreEqual (ErrorEnum.TaskError_IdentifierNotFound, error);
 
 		}
 
 		[Test]
 		public async Task Test_DownloadError_Error3 ()
 		{
+
 			Console.WriteLine ("Test_DownloadError_Error3");
 
 			var bus = new InProcessBus ();
@@ -86,19 +88,20 @@ namespace DownloadManager.Test
 
 			var download = new Download { Url = "url", State = State.Finished };
 			repo.Insert (download);
-			manager.DownloadError (new DownloadError {
+			manager.TaskError (new TaskError {
 				Id = download.Id,
-				Error = ErrorEnum.DidCompleteWithError_Error,
+				Error = TaskErrorEnum.DownloadError,
 			});
 
-			wait1.WaitOne (10);
-			Assert.AreEqual (ErrorEnum.Empty, error);
+			wait1.WaitOne ();
+			Assert.AreEqual (ErrorEnum.TaskError_InvalidState, error);
 
 		}
 
 		[Test]
 		public async Task Test_DownloadError_Error404 ()
 		{
+
 			Console.WriteLine ("Test_DownloadError_Error404");
 
 			var bus = new InProcessBus ();
@@ -115,20 +118,21 @@ namespace DownloadManager.Test
 			var download = new Download { Url = "url", State = State.Downloading };
 			repo.Insert (download);
 
-			manager.DownloadError (new DownloadError {
+			manager.TaskError (new TaskError {
 				Id = download.Id,
-				Error = ErrorEnum.DidCompleteWithError_Error,
+				Error = TaskErrorEnum.InvalidResponse,
+				StatusCode = 404
 			});
-			wait1.WaitOne (10);
 
-			Assert.AreEqual (State.Downloading, download.State);
-			Assert.AreEqual (0, download.StatusCode);
+			Assert.AreEqual (State.Error, download.State);
+			Assert.AreEqual (404, download.StatusCode);
 
 		}
 
 		[Test]
 		public async Task Test_DownloadError_Error500 ()
 		{
+
 			Console.WriteLine ("Test_DownloadError_Error500");
 
 			var bus = new InProcessBus ();
@@ -145,15 +149,14 @@ namespace DownloadManager.Test
 			var download = new Download { Url = "url", State = State.Downloading };
 			repo.Insert (download);
 
-			manager.DownloadError (new DownloadError {
+			manager.TaskError (new TaskError {
 				Id = download.Id,
-				Error = ErrorEnum.DidCompleteWithError_Error,
+				Error = TaskErrorEnum.InvalidResponse,
+				StatusCode = 500
 			});
 
-			wait1.WaitOne (10);
-
-			Assert.AreEqual (State.Downloading, download.State);
-			Assert.AreEqual (0, download.StatusCode);
+			Assert.AreEqual (State.Error, download.State);
+			Assert.AreEqual (500, download.StatusCode);
 
 		}
 
