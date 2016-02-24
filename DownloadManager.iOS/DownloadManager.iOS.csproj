@@ -75,6 +75,8 @@
     <Compile Include="Message\BackgroundSessionEnded.cs" />
     <Compile Include="Message\TaskError.cs" />
     <Compile Include="ProgressManager.cs" />
+    <Compile Include="Bo\Progress.cs" />
+    <Compile Include="Message\NotifyProgress.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -4,6 +4,10 @@ using MonoTouch.Dialog;
 using System.Linq;
 using DownloadManager.iOS;
 using System;
+using ObjCRuntime;
+using System.Threading;
+using System.Threading.Tasks;
+using DownloadManager.iOS.Bo;
 
 namespace DownloadManager.Sample
 {
@@ -21,6 +25,7 @@ namespace DownloadManager.Sample
 
 		Section _downloads;
 		Downloader _downloader;
+		DialogViewController _sample;
 
 		public override void HandleEventsForBackgroundUrl (UIApplication application, string sessionIdentifier, System.Action completionHandler)
 		{
@@ -70,10 +75,10 @@ namespace DownloadManager.Sample
 			_downloads = new Section ("Downloads") {
 			}; 
 
-			string templateurl = "http://pokeprice.local/api/v1/card/image/BLW/{0}";
-			string zipurl = "http://pokeprice.local/api/v1/card/zip/{0}";
-			string httpurl = "http://pokeprice.local/api/v1/http/{0}";
-			string redirecturl = "http://pokeprice.local/api/v1/http/redirect/infinite/0";
+			string templateurl = "http://pokeprice.com/api/v1/card/image/BLW/{0}";
+			string zipurl = "http://pokeprice.com/api/v1/card/zip/{0}";
+			string httpurl = "http://pokeprice.com/api/v1/http/{0}";
+			string redirecturl = "http://pokeprice.com/api/v1/http/redirect/infinite/0";
 			string scollections = "AOR,AQ,AR,B2,BCR,BEST,BKT,BLW,BS,CG,CL,DCR,DEX,DF,DP,DR,DRV,DRX,DS,DX,EM,EPO,EX,FFI,FLF,FO,G1,G2,GE,HL,HP,HS,JU,KSS,LA,LC,LM,LTR,MA,MCD2011,MCD2012,MD,MT,N1,N2,N3,N4,NINTENDOBLACK,NVI,NXD,PHF,PK,PL,PLB,PLF,PLS,POP1,POP2,POP3,POP4,POP5,POP6,POP7,POP8,POP9,PR-BLW,PR-DP,PR-HS,PR-XY,PRC,RG,ROS,RR,RS,RU,SF,SI,SK,SS,SV,SW,TM,TR,TRR,UD,UF,UL,VICTORY,WIZARDSBLACK,XY";
 			string[] collections = scollections.Split (',');
 
@@ -83,43 +88,35 @@ namespace DownloadManager.Sample
 					//new EntryElement ("MaxDownloads", "Simultaneous", "4"),
 					new StringElement ("Add", async delegate {
 						string url = string.Format(templateurl, 1);
-						await _downloader.Queue (url);
-						Sync();
-
+						await Add(url);
 					}),
-					new StringElement ("AddAll",  delegate {
+					new StringElement ("AddAll", async delegate {
 						for(int i=1; i<80; i++) {
 							string url = string.Format(templateurl, i);
-							_downloader.Queue (url);
+							await Add(url);
 						}
-						Sync();
 					}),
-					new StringElement ("AddZip",  delegate {
+					new StringElement ("AddZip",  async delegate {
 						foreach(string coll in collections) {
 							string url = string.Format(zipurl, coll);
-							_downloader.Queue (url);
+							await Add(url);
 						}
-						Sync();
 					}),
-					new StringElement ("Add 404",  delegate {
+					new StringElement ("Add 404",  async delegate {
 						string url = string.Format(httpurl, 404);
-						_downloader.Queue (url);
-						Sync();
+						await Add(url);
 					}),
-					new StringElement ("Add 500",  delegate {
+					new StringElement ("Add 500",  async delegate {
 						string url = string.Format(httpurl, 500);
-						_downloader.Queue (url);
-						Sync();
+						await Add(url);
 					}),
-					new StringElement ("Add 301 Invalid Redirect",  delegate {
+					new StringElement ("Add 301 Invalid Redirect", async delegate {
 						string url = string.Format(httpurl, 301);
-						_downloader.Queue (url);
-						Sync();
+						await Add(url);
 					}),
-					new StringElement ("Add 301 Infinite Redirect",  delegate {
+					new StringElement ("Add 301 Infinite Redirect", async delegate {
 						string url = string.Format(redirecturl, 301);
-						_downloader.Queue (url);
-						Sync();
+						await Add(url);
 					}),
 					new StringElement ("Reset", async delegate {
 						await _downloader.Reset();
@@ -132,12 +129,43 @@ namespace DownloadManager.Sample
 				_downloads
 			};
 
-			var sample = new DialogViewController (root);
-			var nav = new UINavigationController (sample);
+			_sample = new DialogViewController (root);
+			var nav = new UINavigationController (_sample);
 			Window.RootViewController = nav;
 			Window.MakeKeyAndVisible ();
 
 			return true;
+		}
+
+		async Task Add (string url)
+		{
+			var s = string.Format ("{0}", 1);
+			var element = new StringElement(s);
+			_downloads.Insert(0, UITableViewRowAnimation.Top, element);
+
+			var progress = await _downloader.Queue (url, (download) => { 
+				Console.WriteLine("[AppDelegate] ProgressChanged {0}", download.Id);
+				InvokeOnMainThread(() => {
+					element.Caption = Caption(download);
+					element.GetImmediateRootElement()
+						.Reload(element, UITableViewRowAnimation.Automatic);
+				});
+			});
+
+		}
+
+		string Caption(Download download) {
+			float percent = (download.Written / (float)download.Total) * 100;
+			int ipercent = (int)percent;
+			string caption = string.Format("{0} {1} {2}% ({3} / {4})", 
+				download.Id, 
+				download.State.ToString(),
+				ipercent,
+				download.Written,
+				download.Total
+			);
+			return caption;
+
 		}
 
 		void Sync ()
@@ -146,9 +174,7 @@ namespace DownloadManager.Sample
 
 			var list = _downloader.List();
 			var slist = list.Select (item => {
-				var url = item.Url;
-				var surl = url.Substring(url.Length -10, 10);
-				var s = string.Format ("{0} {1} {2} {3} {4}", item.Id, surl, item.State, item.Temporary, item.StatusCode);
+				var s = Caption(item);
 				return s;
 			});
 			

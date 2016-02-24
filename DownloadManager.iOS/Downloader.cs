@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using DownloadManager.iOS.Bo;
-using Foundation;
 using System.Collections.Concurrent;
 
 namespace DownloadManager.iOS
@@ -48,34 +47,9 @@ namespace DownloadManager.iOS
 			_service = new NSUrlSessionManager (_bus, maxdownloads);
 			_progress = new ProgressManager (_bus, _repository);
 
-			_bus.Subscribe<ProgressDownload> (ProgressDownload_Received);
-			_bus.Subscribe<FinishedDownload> (FinishedDownload_Received);
 			_bus.Subscribe<DownloadError> (DownloadError_Received);
 			_bus.Subscribe<TaskError> (TaskError_Received);
 			_bus.Subscribe<QueueEmpty> (QueueEmpty_Received);
-
-		}
-
-		private void ProgressDownload_Received(ProgressDownload progress) {
-
-			Console.WriteLine("[Downloader] ProgressDownload");
-			Console.WriteLine("[Downloader] ProgressDownload Id : {0}", progress.Id);
-			Console.WriteLine("[Downloader] ProgressDownload Total : {0}", progress.Total);
-			Console.WriteLine("[Downloader] ProgressDownload Written : {0}", progress.Written);
-
-			Download download;
-			bool found = _repository.TryById (progress.Id, out download);
-			if (!found) {
-				return;
-			}
-
-		}
-
-		private void FinishedDownload_Received(FinishedDownload finished) {
-
-			Console.WriteLine("[Downloader] FinishedDownload");
-			Console.WriteLine("[Downloader] FinishedDownload Id : {0}", finished.Id);
-			Console.WriteLine("[Downloader] FinishedDownload Location : {0}", finished.Location);
 
 		}
 
@@ -99,7 +73,6 @@ namespace DownloadManager.iOS
 			Console.WriteLine("[Downloader] DownloadError Description : {0}", error.Description);
 			Console.WriteLine("[Downloader] DownloadError (State : {0})", error.State);
 
-
 		}
 
 		private void TaskError_Received(TaskError error) 
@@ -111,16 +84,17 @@ namespace DownloadManager.iOS
 
 		}
 
-		public async Task<NSProgress> Queue (string url)
+		public async Task<Progress> Queue (string url, Action<Download> action)
 		{
 			Console.WriteLine("[Downloader] Queue");
 			Console.WriteLine("[Downloader] Queue url : {0}", url);
 
+			var progress = _progress.Queue (url, action);
 			await _bus.SendAsync<QueueUrl> (new QueueUrl {
 				Url = url
 			});
 
-			return _progress.Queue (url);
+			return progress;
 
 		}
 

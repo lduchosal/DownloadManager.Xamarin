@@ -54,9 +54,16 @@ namespace DownloadManager.iOS
 			Download result = null;
 			bool exists = _repo.TryByUrl (url, out result);
 			if (exists) {
+
+				await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+					Url = result.Url,
+					Download = result
+				});
+
 				await _bus.SendAsync<AlreadyQueued> (new AlreadyQueued { 
 					Url = url
 				});
+
 				return;
 			}
 
@@ -66,6 +73,11 @@ namespace DownloadManager.iOS
 			};
 			_repo.Insert(insert);
 			await _bus.SendAsync<CheckFreeSlot> (new CheckFreeSlot ());
+			await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+				Url = insert.Url,
+				Download = result
+			});
+
 			return;
 		}
 
@@ -125,6 +137,13 @@ namespace DownloadManager.iOS
 			}
 
 			bool progressed = download.TryProgress (progress.Written, progress.Total);
+			_repo.Update (download);
+
+			await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+				Url = download.Url,
+				Download = download
+			});
+
 			if (!progressed) {
 				await _bus.SendAsync<DownloadError> (new DownloadError {
 					Id = progress.Id,
@@ -132,9 +151,6 @@ namespace DownloadManager.iOS
 				});
 				return;
 			}
-			_repo.Update (download);
-
-			
 
 		}
 
@@ -151,8 +167,8 @@ namespace DownloadManager.iOS
 			Console.WriteLine("[Downloadanager] FinishedDownload Id : {0}", finished.Id);
 			Console.WriteLine("[Downloadanager] FinishedDownload Location : {0}", finished.Location);
 
-			Download result;
-			bool found = _repo.TryById(finished.Id, out result);
+			Download download;
+			bool found = _repo.TryById(finished.Id, out download);
 
 			if (!found) {
 				var error = new DownloadError {
@@ -163,18 +179,22 @@ namespace DownloadManager.iOS
 				return;
 			}
 
-			bool progressed = result.TryFinish (finished.Location);
+			bool progressed = download.TryFinish (finished.Location);
 			if (!progressed) {
 				await _bus.SendAsync<DownloadError> (new DownloadError {
-					Id = result.Id,
-					State = result.State,
+					Id = download.Id,
+					State = download.State,
 					Error = ErrorEnum.FinishedDownload_InvalidState
 				});
 				return;
 			}
 
-			_repo.Update (result);
+			_repo.Update (download);
 
+			await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+				Url = download.Url,
+				Download = download
+			});
 		}
 
 		public async void CancelDownloads(CancelDownloads cancel) {
@@ -192,6 +212,14 @@ namespace DownloadManager.iOS
 			}
 
 			_repo.UpdateAll (queued);
+
+
+			foreach (var queue in queued) {
+				await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+					Url = queue.Url,
+					Download = queue
+				});
+			}
 		}
 
 		public async void DownloadRejected(DownloadRejected rejected) {
@@ -268,6 +296,11 @@ namespace DownloadManager.iOS
 				return;
 			}
 			_repo.Update (download);
+
+			await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+				Url = download.Url,
+				Download = download
+			});
 
 		}
 

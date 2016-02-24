@@ -23,7 +23,7 @@ namespace DownloadManager.iOS
 		public bool TryByUrl(string url, out Download download) {
 			string select = @"
 
-				SELECT Id 
+				SELECT * 
 	              FROM Download 
 	             WHERE Url = ?
 	                   ;

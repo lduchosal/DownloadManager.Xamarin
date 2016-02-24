@@ -65,15 +65,15 @@ namespace DownloadManager.iOS.Bo
 
 
 		public bool TryProgress(long written, long total) {
+
+			LastModified = DateTime.Now;
+			Written = Math.Max(written, Written);
+			Total = Math.Max(total, Total);
+
 			if (!_machine.CanFire(Transition.Progress)) {
 				return false;
 			}
-				
 			_machine.Fire (Transition.Progress);
-			LastModified = DateTime.Now;
-			Written = written;
-			Total = total;
-
 			return true;
 		}
 

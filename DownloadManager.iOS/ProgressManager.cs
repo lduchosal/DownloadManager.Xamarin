@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using Fabrik.SimpleBus;
-using Foundation;
 using DownloadManager.iOS.Bo;
 
 namespace DownloadManager.iOS
@@ -9,22 +8,20 @@ namespace DownloadManager.iOS
 	public class ProgressManager
 	{
 
-		private ConcurrentDictionary<string, Foundation.NSProgress> _progresses;
+		private ConcurrentDictionary<string, Progress> _progresses;
 		private readonly IDownloadRepository _repository;
 		private readonly IBus _bus;
-		private readonly NSProgress _rootprogress;
+		private readonly Progress _rootprogress;
 
 		public ProgressManager (IBus bus, IDownloadRepository repo)
 		{
-			_progresses = new ConcurrentDictionary<string, Foundation.NSProgress> ();
+			_progresses = new ConcurrentDictionary<string, Progress> ();
 			_repository = repo;
 			_bus = bus;
-			_rootprogress = new NSProgress ();
-			_rootprogress.BecomeCurrent (100);
+			_rootprogress = new Progress ();
 
-			_bus.Subscribe<ProgressDownload> (ProgressDownload);
-			_bus.Subscribe<FinishedDownload> (FinishedDownload);
-			_bus.Subscribe<TaskError> (TaskError);
+			_bus.Subscribe<NotifyProgress> (NotifyProgress);
+			_bus.Subscribe<ResetDownloads> (ResetDownloads);
 
 			Init ();
 
@@ -33,81 +30,106 @@ namespace DownloadManager.iOS
 		private void Init() {
 			var all = _repository.All ();
 			foreach (var item in all) {
-				_progresses.GetOrAdd (item.Url, NSProgress);
+				_progresses.GetOrAdd (item.Url, Progress);
 			}
 		}
 
 		private void Progress(Download download) {
-			var progress = _progresses.GetOrAdd (download.Url, NSProgress);
-			progress.TotalUnitCount = download.Total;
-			progress.CompletedUnitCount = download.Written;
+			var progress = _progresses.GetOrAdd (download.Url, Progress);
+			progress.Notify (download);
 
 		}
 
-		private NSProgress NSProgress(string url) {
-			var progress = new NSProgress (_rootprogress, new NSDictionary()) {
-				Pausable = true,
-				Cancellable = true,
-			};
-
+		private Progress Progress(string url) {
+			var progress = new Progress (_rootprogress);
 			return progress;
 		}
 
-		public NSProgress Queue(string url) {
+		public Progress Queue(string url, Action<Download> action) {
 
-			var progress = _progresses.GetOrAdd (url, NSProgress);
+			var progress = _progresses.GetOrAdd (url, Progress);
+			progress.Changed += action;
 			return progress;
 		}
 
-
-		public void TaskError(TaskError error) 
+		public void NotifyProgress(NotifyProgress notify) 
 		{
-			Console.WriteLine("[Downloader] TaskError");
-			Console.WriteLine("[Downloader] TaskError Id : {0}", error.Id);
-			Console.WriteLine("[Downloader] TaskError Error : {0}", error.Error);
-			Console.WriteLine("[Downloader] TaskError Description : {0}", error.Description);
+			Console.WriteLine("[ProgressManager] NotifyProgress");
+			Console.WriteLine("[ProgressManager] NotifyProgress Url     : {0}", notify.Url);
+			Console.WriteLine("[ProgressManager] NotifyProgress Id      : {0}", notify.Download.Id);
+			Console.WriteLine("[ProgressManager] NotifyProgress Total   : {0}", notify.Download.Total);
+			Console.WriteLine("[ProgressManager] NotifyProgress Written : {0}", notify.Download.Written);
 
-			Download download;
-			bool found = _repository.TryById (error.Id, out download);
-			if (!found) {
-				return;
-			}
-			NSProgress progress;
-			_progresses.TryGetValue (download.Url, out progress);
-			progress.Cancel ();
+			Progress progress;
+			_progresses.TryGetValue (notify.Url, out progress);
+
+			progress.Notify (notify.Download);
 		}
 
-		public void ProgressDownload(ProgressDownload progress) {
-
-			Console.WriteLine("[Downloader] ProgressDownload");
-			Console.WriteLine("[Downloader] ProgressDownload Id : {0}", progress.Id);
-			Console.WriteLine("[Downloader] ProgressDownload Total : {0}", progress.Total);
-			Console.WriteLine("[Downloader] ProgressDownload Written : {0}", progress.Written);
-
-			Download download;
-			bool found = _repository.TryById (progress.Id, out download);
-			if (!found) {
-				return;
+		public void ResetDownloads(ResetDownloads reset) 
+		{
+			Console.WriteLine("[ProgressManager] ResetDownloads");
+			var progresses = _progresses.Values;
+			_progresses.Clear ();
+			foreach (var progress in progresses) {
+				progress.Reset ();
 			}
-
-			Progress (download);
-
 		}
 
-		public void FinishedDownload(FinishedDownload finished) {
-
-			Console.WriteLine("[Downloader] FinishedDownload");
-			Console.WriteLine("[Downloader] FinishedDownload Id : {0}", finished.Id);
-			Console.WriteLine("[Downloader] FinishedDownload Location : {0}", finished.Location);
-
-			Download download;
-			bool found = _repository.TryById (finished.Id, out download);
-			if (!found) {
-				return;
-			}
-			Progress (download);
-
-		}
+//
+//		public void TaskError(TaskError error) 
+//		{
+//			Console.WriteLine("[ProgressManager] TaskError");
+//			Console.WriteLine("[ProgressManager] TaskError Id : {0}", error.Id);
+//			Console.WriteLine("[ProgressManager] TaskError Error : {0}", error.Error);
+//			Console.WriteLine("[ProgressManager] TaskError Description : {0}", error.Description);
+//
+//			Download download;
+//			bool found = _repository.TryById (error.Id, out download);
+//			if (!found) {
+//				return;
+//			}
+//			Progress progress;
+//			_progresses.TryGetValue (download.Url, out progress);
+//
+//			if (progress.Changed != null) {
+//				progress.Changed (download);
+//			}
+//		}
+//
+//		public void ProgressDownload(ProgressDownload progress) {
+//
+//			Console.WriteLine("[ProgressManager] ProgressDownload");
+//			Console.WriteLine("[ProgressManager] ProgressDownload Id : {0}", progress.Id);
+//			Console.WriteLine("[ProgressManager] ProgressDownload Total : {0}", progress.Total);
+//			Console.WriteLine("[ProgressManager] ProgressDownload Written : {0}", progress.Written);
+//
+//			Download download;
+//			bool found = _repository.TryById (progress.Id, out download);
+//			if (!found) {
+//				return;
+//			}
+//
+//			Progress (download);
+//
+//
+//
+//		}
+//
+//		public void FinishedDownload(FinishedDownload finished) {
+//
+//			Console.WriteLine("[ProgressManager] FinishedDownload");
+//			Console.WriteLine("[ProgressManager] FinishedDownload Id : {0}", finished.Id);
+//			Console.WriteLine("[ProgressManager] FinishedDownload Location : {0}", finished.Location);
+//
+//			Download download;
+//			bool found = _repository.TryById (finished.Id, out download);
+//			if (!found) {
+//				return;
+//			}
+//			Progress (download);
+//
+//		}
 
 	}
 }
