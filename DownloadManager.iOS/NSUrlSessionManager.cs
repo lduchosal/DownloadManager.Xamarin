@@ -292,7 +292,7 @@ namespace DownloadManager.iOS
 
 			_bus.SendAsync<ProgressDownload> (new ProgressDownload {
 				Id = taskid,
-				Total = totalBytesExpectedToWrite,
+				Total = Math.Max(totalBytesExpectedToWrite, totalBytesWritten) ,
 				Written = totalBytesWritten
 			});
 		}

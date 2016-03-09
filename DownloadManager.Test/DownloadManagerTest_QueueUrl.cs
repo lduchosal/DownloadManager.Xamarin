@@ -4,7 +4,6 @@ using DownloadManager.iOS.Bo;
 using System.Threading;
 using DownloadManager.iOS;
 using System.Diagnostics;
-using Fabrik.SimpleBus;
 using NUnit.Framework;
 using System.Threading.Tasks;
 

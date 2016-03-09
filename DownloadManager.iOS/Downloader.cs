@@ -25,6 +25,18 @@ namespace DownloadManager.iOS
 			}
 		}
 
+		private event ProgressEvent _progressevent = delegate {};
+		public event ProgressEvent Progress {
+			add {
+				_progressevent += value;
+			}
+			remove {
+				_progressevent -= value;
+			}
+		}
+
+		public delegate void ProgressEvent (GlobalProgress progress) ;
+
 		public Downloader ()
 		{
 			var personal = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
@@ -50,13 +62,25 @@ namespace DownloadManager.iOS
 			_bus.Subscribe<DownloadError> (DownloadError_Received);
 			_bus.Subscribe<TaskError> (TaskError_Received);
 			_bus.Subscribe<QueueEmpty> (QueueEmpty_Received);
+			_bus.Subscribe<GlobalProgress> (GlobalProgress_Received);
+
+
 
 		}
 
 		private void QueueEmpty_Received(QueueEmpty empty) {
-		
+
 			Console.WriteLine ("[Downloader] QueueEmpty");
 
+
+		}
+		private void GlobalProgress_Received(GlobalProgress progress) {
+
+			Console.WriteLine ("[Downloader] GlobalProgress");
+			Console.WriteLine ("[Downloader] GlobalProgress Total : {0}", progress.Total);
+			Console.WriteLine ("[Downloader] GlobalProgress Written : {0}", progress.Written);
+
+			_progressevent (progress);
 		}
 
 		private void QueueFull_Received(QueueFull full) 
@@ -84,17 +108,15 @@ namespace DownloadManager.iOS
 
 		}
 
-		public async Task<Progress> Queue (string url, Action<Download> action)
+		public void Queue (string url, Action<Download> action)
 		{
 			Console.WriteLine("[Downloader] Queue");
 			Console.WriteLine("[Downloader] Queue url : {0}", url);
 
 			var progress = _progress.Queue (url, action);
-			await _bus.SendAsync<QueueUrl> (new QueueUrl {
+			_bus.SendAsync<QueueUrl> (new QueueUrl {
 				Url = url
 			});
-
-			return progress;
 
 		}
 

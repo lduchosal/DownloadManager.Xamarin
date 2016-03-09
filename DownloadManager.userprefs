@@ -1,20 +1,17 @@
 ﻿<Properties StartupItem="DownloadManager.Sample/DownloadManager.Sample.csproj" RefactoringSettings.EnableRefactorings="True">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPadAir2.9.2" />
   <MonoDevelop.Ide.Workbench ActiveDocument="DownloadManager.Sample/AppDelegate.cs">
     <Files>
-      <File FileName="DownloadManager.iOS/NSUrlSessionManager.cs" Line="101" Column="3" />
+      <File FileName="DownloadManager.iOS/NSUrlSessionManager.cs" Line="1" Column="1" />
       <File FileName="DownloadManager.Sample/Main.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_TaskError.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_FreeSlot.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_CancelDownloads.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_DownloadError.cs" Line="1" Column="1" />
       <File FileName="DownloadManager.Test/DownloadTest.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Test/DownloadManagerTest_ProgressDownload.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Test/ProgressManagerTest.cs" Line="50" Column="29" />
       <File FileName="DownloadManager.TestRunner/AppDelegate.cs" Line="1" Column="1" />
-      <File FileName="DownloadManager.Sample/AppDelegate.cs" Line="81" Column="46" />
-      <File FileName="DownloadManager.iOS/Bo/Download.statemachine.cs" Line="75" Column="5" />
-      <File FileName="DownloadManager.iOS/DownloadManager.cs" Line="27" Column="36" />
+      <File FileName="DownloadManager.Sample/AppDelegate.cs" Line="176" Column="10" />
+      <File FileName="DownloadManager.iOS/Bo/Download.statemachine.cs" Line="1" Column="1" />
+      <File FileName="DownloadManager.iOS/DownloadManager.cs" Line="194" Column="1" />
+      <File FileName="DownloadManager.iOS/ProgressManager.cs" Line="66" Column="49" />
+      <File FileName="DownloadManager.iOS/Downloader.cs" Line="120" Column="1" />
+      <File FileName="DownloadManager.iOS/Bo/GlobalProgress.cs" Line="16" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
@@ -26,7 +23,9 @@
       <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="251" column="65" />
       <Breakpoint file="/Users/q/Projects/DownloadManager/DownloadManager.iOS/NSUrlSessionManager.cs" line="296" column="1" />
       <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.iOS/NSUrlSessionManager.cs" line="243" column="1" />
-      <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.Sample/AppDelegate.cs" line="32" column="1" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.Sample/AppDelegate.cs" line="36" column="1" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.iOS/DownloadManager.cs" line="300" column="25" />
+      <Breakpoint file="/Users/q/Projects/DownloadManager.Xamarin/DownloadManager.iOS/DownloadManager.cs" line="218" column="47" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

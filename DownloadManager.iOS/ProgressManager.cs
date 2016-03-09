@@ -2,6 +2,8 @@
 using System.Collections.Concurrent;
 using Fabrik.SimpleBus;
 using DownloadManager.iOS.Bo;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace DownloadManager.iOS
 {
@@ -11,14 +13,14 @@ namespace DownloadManager.iOS
 		private ConcurrentDictionary<string, Progress> _progresses;
 		private readonly IDownloadRepository _repository;
 		private readonly IBus _bus;
-		private readonly Progress _rootprogress;
+		private readonly Timer _timer;
 
 		public ProgressManager (IBus bus, IDownloadRepository repo)
 		{
 			_progresses = new ConcurrentDictionary<string, Progress> ();
 			_repository = repo;
 			_bus = bus;
-			_rootprogress = new Progress ();
+			_timer = new Timer (NotifyGlobalProgress, null, 1000, 1000);
 
 			_bus.Subscribe<NotifyProgress> (NotifyProgress);
 			_bus.Subscribe<ResetDownloads> (ResetDownloads);
@@ -30,29 +32,24 @@ namespace DownloadManager.iOS
 		private void Init() {
 			var all = _repository.All ();
 			foreach (var item in all) {
-				_progresses.GetOrAdd (item.Url, Progress);
+				_progresses.GetOrAdd (item.Url, new Progress());
 			}
 		}
 
 		private void Progress(Download download) {
-			var progress = _progresses.GetOrAdd (download.Url, Progress);
+			var progress = _progresses.GetOrAdd (download.Url, new Progress());
 			progress.Notify (download);
 
 		}
 
-		private Progress Progress(string url) {
-			var progress = new Progress (_rootprogress);
-			return progress;
-		}
-
 		public Progress Queue(string url, Action<Download> action) {
 
-			var progress = _progresses.GetOrAdd (url, Progress);
+			var progress = _progresses.GetOrAdd (url, new Progress());
 			progress.Changed += action;
 			return progress;
 		}
 
-		public void NotifyProgress(NotifyProgress notify) 
+		public async void NotifyProgress(NotifyProgress notify) 
 		{
 			Console.WriteLine("[ProgressManager] NotifyProgress");
 			Console.WriteLine("[ProgressManager] NotifyProgress Url     : {0}", notify.Url);
@@ -64,7 +61,49 @@ namespace DownloadManager.iOS
 			_progresses.TryGetValue (notify.Url, out progress);
 
 			progress.Notify (notify.Download);
+
 		}
+
+		private void NotifyGlobalProgress(object state) {
+
+			Console.WriteLine("[ProgressManager] NotifyGlobalProgress");
+
+			long total = 100;
+			long written = 100;
+			foreach (var item in _repository.All()) {
+
+				long itotal = item.State == State.Finished ? 100
+					: item.State == State.Error ? 100
+					: item.State == State.Waiting ? 100
+					: item.State == State.Downloading 
+					? (item.Total == 0 ? 100 : item.Total)
+					: 100;
+
+
+				long iwritten = item.State == State.Finished ? 100
+					: item.State == State.Error ? 100
+					: item.State == State.Waiting ? 0
+					: item.State == State.Downloading 
+						? item.Written : 0;
+
+				itotal = Math.Max(itotal, iwritten);
+
+				int percent = (int)((iwritten / (float)itotal) * 100);
+				written += percent;
+				total += 100;
+			}
+
+			var task = _bus.SendAsync<GlobalProgress> (new GlobalProgress {
+				Total = total,
+				Written = written
+			});
+
+			task.ContinueWith ((t) => {
+				Console.WriteLine("[ProgressManager] NotifyGlobalProgress completed");
+			});
+
+		}
+
 
 		public void ResetDownloads(ResetDownloads reset) 
 		{

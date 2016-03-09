@@ -38,6 +38,7 @@ namespace DownloadManager.iOS
 		public void BackgroundSessionEnded(BackgroundSessionEnded ended) {
 
 			Console.WriteLine("[Downloadanager] BackgroundSessionEnded");
+
 			if (_completion == null) {
 				return;
 			}
@@ -75,7 +76,7 @@ namespace DownloadManager.iOS
 			await _bus.SendAsync<CheckFreeSlot> (new CheckFreeSlot ());
 			await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
 				Url = insert.Url,
-				Download = result
+				Download = insert
 			});
 
 			return;
@@ -253,8 +254,6 @@ namespace DownloadManager.iOS
 
 		}
 
-
-
 		public async void DownloadError(DownloadError error) {
 
 			Console.WriteLine("[Downloadanager] DownloadError");
@@ -263,8 +262,8 @@ namespace DownloadManager.iOS
 			Console.WriteLine("[Downloadanager] DownloadError Description : {0}", error.Description);
 			Console.WriteLine("[Downloadanager] DownloadError State       : {0}", error.State);
 
-
 		}
+
 		public async void TaskError(TaskError error) {
 
 			Console.WriteLine("[Downloadanager] TaskError");
@@ -272,7 +271,6 @@ namespace DownloadManager.iOS
 			Console.WriteLine("[Downloadanager] TaskError Error       : {0}", error.Error);
 			Console.WriteLine("[Downloadanager] TaskError Description : {0}", error.Description);
 			Console.WriteLine("[Downloadanager] TaskError StatusCode  : {0}", error.StatusCode);
-
 
 			Download download;
 			bool found = _repo.TryById(error.Id, out download);

@@ -22,7 +22,7 @@ namespace DownloadManager.Test
 			var repo = new DownloadRepositoryMock ();
 
 			var progressmanager = new ProgressManager (bus, repo);
-			Progress progress = progressmanager.Queue ("url", (download) => {
+			progressmanager.Queue ("url", (download) => {
 
 			});
 
@@ -48,7 +48,7 @@ namespace DownloadManager.Test
 			repo.Insert (download);
 
 			var progressmanager = new ProgressManager (bus, repo);
-			Progress progress = progressmanager.Queue (download.Url, (d) => {
+			progressmanager.Queue (download.Url, (d) => {
 				total = d.Total;
 				written = d.Written;
 				wait1.Set();

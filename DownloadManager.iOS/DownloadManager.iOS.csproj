@@ -77,6 +77,7 @@
     <Compile Include="ProgressManager.cs" />
     <Compile Include="Bo\Progress.cs" />
     <Compile Include="Message\NotifyProgress.cs" />
+    <Compile Include="Bo\GlobalProgress.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
