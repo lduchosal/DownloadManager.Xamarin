@@ -58,9 +58,9 @@ namespace DownloadManager.iOS
 			Console.WriteLine("[ProgressManager] NotifyProgress Written : {0}", notify.Download.Written);
 
 			Progress progress;
-			_progresses.TryGetValue (notify.Url, out progress);
-
-			progress.Notify (notify.Download);
+			if (_progresses.TryGetValue (notify.Url, out progress)) {
+				progress.Notify (notify.Download);
+			}
 
 		}
 
@@ -103,7 +103,6 @@ namespace DownloadManager.iOS
 			});
 
 		}
-
 
 		public void ResetDownloads(ResetDownloads reset) 
 		{

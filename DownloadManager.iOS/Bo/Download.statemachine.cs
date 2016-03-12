@@ -37,12 +37,14 @@ namespace DownloadManager.iOS.Bo
 			_machine.Fire (Transition.Cancel);
 		}
 
-		public bool TryFail(int statuscode) {
+		public bool TryFail(int statuscode, TaskErrorEnum error, string description) {
 			if (!_machine.CanFire(Transition.Fail)) {
 				return false;
 			}
 			_machine.Fire (Transition.Fail);
 			StatusCode = statuscode;
+			Error = (int)error;
+			Description = description;
 			return true;
 		}
 

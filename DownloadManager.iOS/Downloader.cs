@@ -35,6 +35,21 @@ namespace DownloadManager.iOS
 			}
 		}
 
+		private bool _enabled = false;
+		public bool Enabled {
+			get {
+				return _enabled;
+			}
+			set {
+				_enabled = value;
+			}
+		}
+
+		public bool TryDetail (string url, out Download result)
+		{
+			return _repository.TryByUrl (url, out result);
+		}
+
 		public delegate void ProgressEvent (GlobalProgress progress) ;
 
 		public Downloader ()
@@ -63,8 +78,6 @@ namespace DownloadManager.iOS
 			_bus.Subscribe<TaskError> (TaskError_Received);
 			_bus.Subscribe<QueueEmpty> (QueueEmpty_Received);
 			_bus.Subscribe<GlobalProgress> (GlobalProgress_Received);
-
-
 
 		}
 

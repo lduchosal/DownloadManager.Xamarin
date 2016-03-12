@@ -71,6 +71,8 @@ namespace DownloadManager.iOS
 			var insert = new Bo.Download {
 				State = Bo.State.Waiting,
 				Url = url,
+				Written = 0,
+				Total = 0
 			};
 			_repo.Insert(insert);
 			await _bus.SendAsync<CheckFreeSlot> (new CheckFreeSlot ());
@@ -284,7 +286,7 @@ namespace DownloadManager.iOS
 				return;
 			}
 
-			bool failed = download.TryFail (error.StatusCode);
+			bool failed = download.TryFail (error.StatusCode, error.Error, error.Description);
 			if (!failed) {
 				await _bus.SendAsync<DownloadError> (new DownloadError {
 					Id = download.Id,

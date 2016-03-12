@@ -2,6 +2,7 @@
 using System;
 using NUnit.Framework;
 using System.Diagnostics;
+using DownloadManager.iOS;
 
 namespace DownloadManager.Test
 {
@@ -15,7 +16,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Waiting_Fail");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			Assert.AreEqual (State.Error, download.State, "State");
 		}
@@ -129,7 +130,7 @@ namespace DownloadManager.Test
 			var download = new Download ();
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (true, resumed, "Resumed");
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			Assert.AreEqual (State.Error, download.State, "State");
 		}
@@ -164,7 +165,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Retry");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			download.Retry ();
 			Assert.AreEqual (State.Waiting, download.State, "State");
@@ -176,7 +177,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Cancel");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			download.Cancel ();
 			Assert.AreEqual (State.Finished, download.State, "State");
@@ -188,9 +189,9 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Fail");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
-			bool failed2 = download.TryFail (404);
+			bool failed2 = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed2, "Failed2");
 			Assert.AreEqual (State.Finished, download.State, "State");
 		}
@@ -202,7 +203,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Invalid1");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			bool resumed = download.TryResume ();
 			Assert.AreEqual (false, resumed, "Resumed");
@@ -214,7 +215,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Invalid2");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			bool paused = download.TryPause ();
 			Assert.AreEqual (false, paused, "Paused");
@@ -226,7 +227,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Invalid3");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			bool progressed = download.TryProgress (0,0);
 			Assert.AreEqual (false, progressed, "Progressed");
@@ -238,7 +239,7 @@ namespace DownloadManager.Test
 			Console.WriteLine ("Error_Invalid4");
 
 			var download = new Download ();
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (true, failed, "Failed");
 			bool finished = download.TryFinish ("location");
 			Assert.AreEqual (null, download.Temporary, "Temporary");
@@ -271,7 +272,7 @@ namespace DownloadManager.Test
 			bool finished = download.TryFinish ("location");
 			Assert.AreEqual (true, finished, "Finished");
 			Assert.AreEqual ("location", download.Temporary, "Temporary");
-			bool failed = download.TryFail (404);
+			bool failed = download.TryFail (404, TaskErrorEnum.DownloadError, "Not Found");
 			Assert.AreEqual (false, failed, "Failed");
 		}
 

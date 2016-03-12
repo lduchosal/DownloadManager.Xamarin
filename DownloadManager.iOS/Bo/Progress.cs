@@ -4,9 +4,12 @@ namespace DownloadManager.iOS.Bo
 {
 	public class Progress
 	{
-
 		public void Notify(Download download) {
-			_changed (download);
+			try {
+				_changed (download);
+			} catch (Exception e) {
+				Console.WriteLine (e.ToString());
+			}
 		}
 
 		public void Reset() {

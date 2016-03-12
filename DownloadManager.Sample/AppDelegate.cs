@@ -85,10 +85,22 @@ namespace DownloadManager.Sample
 			string scollections = "AOR,AQ,AR,B2,BCR,BEST,BKT,BLW,BS,CG,CL,DCR,DEX,DF,DP,DR,DRV,DRX,DS,DX,EM,EPO,EX,FFI,FLF,FO,G1,G2,GE,HL,HP,HS,JU,KSS,LA,LC,LM,LTR,MA,MCD2011,MCD2012,MD,MT,N1,N2,N3,N4,NINTENDOBLACK,NVI,NXD,PHF,PK,PL,PLB,PLF,PLS,POP1,POP2,POP3,POP4,POP5,POP6,POP7,POP8,POP9,PR-BLW,PR-DP,PR-HS,PR-XY,PRC,RG,ROS,RR,RS,RU,SF,SI,SK,SS,SV,SW,TM,TR,TRR,UD,UF,UL,VICTORY,WIZARDSBLACK,XY";
 			string[] collections = scollections.Split (',');
 
+			#if REMOTE
+			templateurl = templateurl.Replace("http://pokeprice.local", "https://pokeprice.com");
+			zipurl = zipurl.Replace("http://pokeprice.local", "https://pokeprice.com");
+			httpurl = httpurl.Replace("http://pokeprice.local", "https://pokeprice.com");
+			redirecturl = redirecturl.Replace("http://pokeprice.local", "https://pokeprice.com");
+			#endif
+
+			var enable = new BooleanElement ("Enabled", true);
+			enable.ValueChanged += (sender, e) => {
+				_downloader.Enabled = enable.Value;
+			};
+
 			var globalprogress = new StringElement ("");
 			var root = new RootElement ("Root") {
 				new Section ("Management"){
-					new BooleanElement ("Enabled", true),
+					enable,
 					globalprogress
 				},
 				_downloads
@@ -113,9 +125,6 @@ namespace DownloadManager.Sample
 			};
 			
 			_sample = new DialogViewController (root);
-			Navigation = new UINavigationController (_sample);
-			Window.RootViewController = Navigation;
-			Window.MakeKeyAndVisible ();
 
 			var add = new UIBarButtonItem ("Add", 
 				UIBarButtonItemStyle.Bordered, 
@@ -185,10 +194,14 @@ namespace DownloadManager.Sample
 				});
 			
 
-			
+			Navigation = new UINavigationController ();
+			Window.RootViewController = Navigation;
+			Window.MakeKeyAndVisible ();
+
+			Navigation.PushViewController (_sample, false);
+
 			_sample.SetToolbarItems (new [] { add, addall, zips, s404, s500, s301, s301p, reset, sync }, true);
 			Navigation.SetToolbarHidden (false, true);
-
 
 			return true;
 		}
@@ -196,12 +209,44 @@ namespace DownloadManager.Sample
 		void Add (string url)
 		{
 			var s = string.Format ("{0}", 1);
-			var element = new StringElement(s);
+			var element = new StringElement(s, () => {
+
+				Download detail;
+				bool queued = _downloader.TryDetail(url, out detail);
+				if (!queued) {
+					return ;
+				}
+
+				var nextroot = new RootElement(s) {
+					new Section ("Detail"){
+						new StringElement("Id", detail.Id.ToString()),
+						new StringElement("Url", detail.Url),
+						new StringElement("State", detail.State.ToString()),
+						new StringElement("LastModified", detail.LastModified.ToString()),
+						new StringElement("DownloadState", detail.DownloadState.ToString()),
+						new StringElement("Temporary", detail.Temporary),
+						new StringElement("Total", detail.Total.ToString()),
+						new StringElement("Written", detail.Written.ToString()),
+						new StringElement("StatusCode", detail.StatusCode.ToString()),
+						new StringElement("Description", detail.Description),
+						new StringElement("Error", detail.Error.ToString()),
+					},
+					new Section ("Actions"){
+						new StringElement("Back", () => {
+							Navigation.PopViewController(true);
+						}),
+					}
+				};
+				var dvc = new DialogViewController (nextroot);
+				Navigation.PushViewController(dvc, true);
+			});
+			
 			_downloads.Insert(0, UITableViewRowAnimation.Top, element);
 
 			_downloader.Queue (url, (download) => { 
 				Console.WriteLine("[AppDelegate] ProgressChanged {0}", download.Id);
 				InvokeOnMainThread(() => {
+					Console.WriteLine("[AppDelegate] ProgressChanged {0} OnMainThread", download.Id);
 					element.Caption = Caption(download);
 					element.GetImmediateRootElement()
 						.Reload(element, UITableViewRowAnimation.Automatic);
@@ -211,8 +256,11 @@ namespace DownloadManager.Sample
 		}
 
 		string Caption(Download download) {
-			float percent = (download.Written / (float)download.Total) * 100;
+			
+			float percent = download.Total == 0 ? 0f :
+				(download.Written / (float)download.Total) * 100;
 			int ipercent = (int)percent;
+
 			string caption = string.Format("{0} {1} {2}% ({3} / {4})", 
 				download.Id, 
 				download.State.ToString(),
@@ -226,18 +274,15 @@ namespace DownloadManager.Sample
 
 		void Sync ()
 		{
-			Console.WriteLine ("[AppDelegate] DidEnterBackground");
+			Console.WriteLine ("[AppDelegate] Sync");
 
 			var list = _downloader.List();
-			var slist = list.Select (item => {
-				var s = Caption(item);
-				return s;
-			});
-			
-			var elements = from s in slist
-				select new StringElement(s);
 			_downloads.Clear();
-			_downloads.AddAll(elements);
+
+			foreach (var item in list) { 
+				Add (item.Url);
+			}
+
 		}
 	}
 }
