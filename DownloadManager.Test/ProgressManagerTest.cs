@@ -48,11 +48,12 @@ namespace DownloadManager.Test
 			repo.Insert (download);
 
 			var progressmanager = new ProgressManager (bus, repo);
-			progressmanager.Queue (download.Url, (d) => {
+			Action<Download> progresshandle = (d) => {
 				total = d.Total;
 				written = d.Written;
 				wait1.Set();
-			});
+			};
+			progressmanager.Queue (download.Url, progresshandle);
 
 			download.Total = 100;
 			download.Written = 10;
@@ -84,8 +85,5 @@ namespace DownloadManager.Test
 			Assert.AreEqual (100, total, "Total");
 
 		}
-
-
-
 	}
 }

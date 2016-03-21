@@ -8,6 +8,7 @@ using ObjCRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using DownloadManager.iOS.Bo;
+using System.IO;
 
 namespace DownloadManager.Sample
 {
@@ -16,12 +17,12 @@ namespace DownloadManager.Sample
 	[Register ("AppDelegate")]
 	public class AppDelegate : UIApplicationDelegate
 	{
-		// class-level declarations
 
 		public override UIWindow Window {
 			get;
 			set;
 		}
+
 		public UINavigationController Navigation {
 			get;
 			set;
@@ -49,12 +50,11 @@ namespace DownloadManager.Sample
 		public override void PerformFetch (UIApplication application, Action<UIBackgroundFetchResult> completionHandler)
 		{
 			Console.WriteLine ("[AppDelegate] PerformFetch");
-
 			var result = UIBackgroundFetchResult.NoData;
 
 			try 
 			{
-				_downloader.Run();
+				//_downloader.Run();
 				result = UIBackgroundFetchResult.NewData;
 			}
 			catch 
@@ -67,6 +67,19 @@ namespace DownloadManager.Sample
 			}
 		}
 
+		public void FinishedDownload(string url, string description, string temporaryfile) {
+			
+			Console.WriteLine ("[AppDelegate] FinishedDownload");
+			Console.WriteLine ("[AppDelegate] FinishedDownload Url           : {0}", url);
+			Console.WriteLine ("[AppDelegate] FinishedDownload Description   : {0}", description);
+			Console.WriteLine ("[AppDelegate] FinishedDownload Temporaryfile : {0}", temporaryfile);
+
+			bool exists = File.Exists (temporaryfile);
+			Console.WriteLine ("[AppDelegate] FinishedDownload Exists        : {0}", exists);
+			File.Delete (temporaryfile);
+
+		}
+
 		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 		{
 			Console.WriteLine ("[AppDelegate] FinishedLaunching");
@@ -75,6 +88,7 @@ namespace DownloadManager.Sample
 			Window = new UIWindow (UIScreen.MainScreen.Bounds);
 
 			_downloader = new Downloader ();
+			_downloader.Finished = FinishedDownload;
 			_downloads = new Section ("Downloads") {
 			}; 
 
@@ -141,7 +155,8 @@ namespace DownloadManager.Sample
 					 Add(url);
 					}
 				});
-			var zips = new UIBarButtonItem ("Zip", 
+			
+			var zips = new UIBarButtonItem ("Z", 
 				UIBarButtonItemStyle.Bordered, 
 				 (sender, e) => {
 					foreach(string coll in collections) {
@@ -151,21 +166,21 @@ namespace DownloadManager.Sample
 				});
 
 
-			var s404 = new UIBarButtonItem ("404", 
+			var s404 = new UIBarButtonItem ("4", 
 				UIBarButtonItemStyle.Bordered, 
 				 (sender, e) => {
 					string url = string.Format(httpurl, 404);
 					 Add(url);
 				});
 
-			var s500 = new UIBarButtonItem ("500", 
+			var s500 = new UIBarButtonItem ("5", 
 				UIBarButtonItemStyle.Bordered, 
 				 (sender, e) => {
 					string url = string.Format(httpurl, 500);
 					 Add(url);
 				});
 
-			var s301 = new UIBarButtonItem ("301", 
+			var s301 = new UIBarButtonItem ("3", 
 				UIBarButtonItemStyle.Bordered, 
 				 (sender, e) => {
 					string url = string.Format(httpurl, 301);
@@ -173,7 +188,7 @@ namespace DownloadManager.Sample
 				});
 
 
-			var s301p = new UIBarButtonItem ("301+", 
+			var s301p = new UIBarButtonItem ("3+", 
 				UIBarButtonItemStyle.Bordered, 
 				 (sender, e) => {
 					string url = string.Format(redirecturl, 301);
@@ -186,13 +201,13 @@ namespace DownloadManager.Sample
 					await _downloader.Reset();
 					Sync();
 				});
-			
-			var sync = new UIBarButtonItem ("Sync", 
+
+			var sync = new UIBarButtonItem ("S", 
 				UIBarButtonItemStyle.Bordered, 
 				(sender, e) => {
 					Sync();
 				});
-			
+
 
 			Navigation = new UINavigationController ();
 			Window.RootViewController = Navigation;
@@ -200,7 +215,7 @@ namespace DownloadManager.Sample
 
 			Navigation.PushViewController (_sample, false);
 
-			_sample.SetToolbarItems (new [] { add, addall, zips, s404, s500, s301, s301p, reset, sync }, true);
+			_sample.SetToolbarItems (new [] { add, addall, zips, s404, s500, s301, s301p, reset, sync}, true);
 			Navigation.SetToolbarHidden (false, true);
 
 			return true;
@@ -209,7 +224,13 @@ namespace DownloadManager.Sample
 		void Add (string url)
 		{
 			var s = string.Format ("{0}", 1);
-			var element = new StringElement(s, () => {
+
+			Action<Download> refresh = (download) => { 
+				Console.WriteLine ("[AppDelegate] ProgressChanged {0}", download.Id);
+			};
+			var progress = _downloader.Queue (url, null, refresh);
+
+			Action tapped = () => {
 
 				Download detail;
 				bool queued = _downloader.TryDetail(url, out detail);
@@ -218,6 +239,11 @@ namespace DownloadManager.Sample
 				}
 
 				var nextroot = new RootElement(s) {
+					new Section ("Actions"){
+						new StringElement("Back", () => {
+							Navigation.PopViewController(true);
+						}),
+					},
 					new Section ("Detail"){
 						new StringElement("Id", detail.Id.ToString()),
 						new StringElement("Url", detail.Url),
@@ -228,30 +254,29 @@ namespace DownloadManager.Sample
 						new StringElement("Total", detail.Total.ToString()),
 						new StringElement("Written", detail.Written.ToString()),
 						new StringElement("StatusCode", detail.StatusCode.ToString()),
-						new StringElement("Description", detail.Description),
+						new StringElement("Description", detail.ErrorDescription),
 						new StringElement("Error", detail.Error.ToString()),
 					},
-					new Section ("Actions"){
-						new StringElement("Back", () => {
-							Navigation.PopViewController(true);
-						}),
-					}
 				};
 				var dvc = new DialogViewController (nextroot);
 				Navigation.PushViewController(dvc, true);
-			});
-			
-			_downloads.Insert(0, UITableViewRowAnimation.Top, element);
+			};
 
-			_downloader.Queue (url, (download) => { 
-				Console.WriteLine("[AppDelegate] ProgressChanged {0}", download.Id);
-				InvokeOnMainThread(() => {
-					Console.WriteLine("[AppDelegate] ProgressChanged {0} OnMainThread", download.Id);
-					element.Caption = Caption(download);
-					element.GetImmediateRootElement()
-						.Reload(element, UITableViewRowAnimation.Automatic);
-				});
-			});
+
+			var element = new ProgressElement(s, tapped, progress);
+
+			Action<Download> progressing = (d) => {
+				InvokeOnMainThread (() => {
+					Console.WriteLine ("[ProgressElement] Bind {0} OnMainThread", d.Id);
+					element.Caption = Caption (d);
+					element.GetImmediateRootElement ()
+						.Reload (element, UITableViewRowAnimation.Automatic);
+				}
+				);
+			};
+			progress.Bind(progressing);
+
+			_downloads.Insert(0, UITableViewRowAnimation.Top, element);
 
 		}
 
@@ -282,8 +307,8 @@ namespace DownloadManager.Sample
 			foreach (var item in list) { 
 				Add (item.Url);
 			}
-
 		}
+
 	}
 }
 

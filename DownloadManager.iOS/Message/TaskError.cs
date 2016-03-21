@@ -29,7 +29,8 @@ namespace DownloadManager.iOS
 	public enum TaskErrorEnum : int {
 		Empty = 0,
 		DownloadError,
-		InvalidResponse
+		InvalidResponse,
+		Timeout,
 
 	}
 }

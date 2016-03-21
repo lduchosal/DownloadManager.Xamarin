@@ -59,9 +59,7 @@
     <Compile Include="Message\FreeSlot.cs" />
     <Compile Include="Message\QueueDownload.cs" />
     <Compile Include="Message\ProgressDownload.cs" />
-    <Compile Include="Message\StartedDownload.cs" />
     <Compile Include="Downloader.cs" />
-    <Compile Include="Message\DownloadFinished.cs" />
     <Compile Include="Message\ResetDownloads.cs" />
     <Compile Include="Message\QueueUrl.cs" />
     <Compile Include="Message\AlreadyQueued.cs" />
@@ -77,7 +75,12 @@
     <Compile Include="ProgressManager.cs" />
     <Compile Include="Bo\Progress.cs" />
     <Compile Include="Message\NotifyProgress.cs" />
-    <Compile Include="Bo\GlobalProgress.cs" />
+    <Compile Include="Message\CheckStoppedDownload.cs" />
+    <Compile Include="Message\NotifyGlobalProgress.cs" />
+    <Compile Include="Message\GlobalProgress.cs" />
+    <Compile Include="Message\FinishedDownload.cs" />
+    <Compile Include="Message\ThrottleNotifyProgress.cs" />
+    <Compile Include="Message\NotifyFinish.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

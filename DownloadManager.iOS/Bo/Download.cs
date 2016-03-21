@@ -64,6 +64,12 @@ namespace DownloadManager.iOS.Bo
 			set;
 		}
 
+		public string ErrorDescription
+		{
+			get;
+			set;
+		}
+
 		public string Description
 		{
 			get;
@@ -82,6 +88,23 @@ namespace DownloadManager.iOS.Bo
 			return string.Format ("[Download: Id={0}, Url={1}]", Id, Url);
 		}
 
+		public override bool Equals (object obj)
+		{
+			var remote = (Download)obj;
+			if (remote == null) {
+				return false;
+			}
+			var remoteurl = remote.Url;
+			if (remoteurl == null) {
+				return false;
+			}
+			return remoteurl.Equals (this.Url);
+		}
+
+		public override int GetHashCode ()
+		{
+			return this.Id;
+		}
 	}
 }
 

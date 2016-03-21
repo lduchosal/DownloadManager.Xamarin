@@ -18,23 +18,6 @@ namespace DownloadManager.Test
 			return true;
 		}
 
-		public async Task<bool> StartedDownload(string url) {
-			await _bus.SendAsync<StartedDownload> (new StartedDownload {
-				Url = url
-			});
-
-			return true;
-		}
-
-		public async Task<bool> ProgressDownload (int id, int bytes, int total)
-		{
-			await _bus.SendAsync<ProgressDownload> (new ProgressDownload {
-				Id = id,
-				Written = bytes,
-				Total = total,			
-			});
-			return true;
-		}
 
 		public async Task<bool> DownloadFinished (int id, string location)
 		{

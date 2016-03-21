@@ -2,27 +2,31 @@
 
 namespace DownloadManager.iOS.Bo
 {
-	public class Progress
+	public class Progress : IDisposable
 	{
+		private event Action<Download> _changed = delegate { };
+
+		public Progress(Action<Download> action) {
+			Bind (action);
+		}
+
+		public void Bind(Action<Download> action) {
+			_changed += action;
+		}
+
 		public void Notify(Download download) {
 			try {
 				_changed (download);
 			} catch (Exception e) {
-				Console.WriteLine (e.ToString());
+				// disposed object crash..
+				Console.WriteLine(e.ToString());
 			}
 		}
 
-		public void Reset() {
+		public void Dispose ()
+		{
 			_changed = delegate { };
 		}
-
-		private event Action<Download> _changed = delegate { };
-		public event Action<Download> Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
-		}
-
 	}
 }
 

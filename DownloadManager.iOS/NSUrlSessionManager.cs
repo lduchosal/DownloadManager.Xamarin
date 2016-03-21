@@ -3,6 +3,7 @@ using Fabrik.SimpleBus;
 using Foundation;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Threading;
 
 namespace DownloadManager.iOS
 {
@@ -224,10 +225,14 @@ namespace DownloadManager.iOS
 			}
 
 			string path = location == null ? null : location.Path;
+			AutoResetEvent temporaryfilelock = new AutoResetEvent (false);
 			_bus.SendAsync<FinishedDownload> (new FinishedDownload {
 				Id = taskid,
 				Location = path,
+				FileLock = temporaryfilelock
 			});
+
+			temporaryfilelock.WaitOne ();
 
 		}
 

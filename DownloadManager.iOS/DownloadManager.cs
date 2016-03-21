@@ -33,6 +33,7 @@ namespace DownloadManager.iOS
 			_bus.Subscribe<TaskError> (TaskError);
 			_bus.Subscribe<FreeSlot> (FreeSlot);
 			_bus.Subscribe<BackgroundSessionEnded> (BackgroundSessionEnded);
+			_bus.Subscribe<CheckStoppedDownload> (CheckStoppedDownload);
 		}
 
 		public void BackgroundSessionEnded(BackgroundSessionEnded ended) {
@@ -49,9 +50,11 @@ namespace DownloadManager.iOS
 		public async void QueueUrl(QueueUrl qurl) {
 
 			Console.WriteLine("[Downloadanager] QueueUrl");
-			Console.WriteLine("[Downloadanager] QueueUrl Url : {0}", qurl.Url);
+			Console.WriteLine("[Downloadanager] QueueUrl Url         : {0}", qurl.Url);
+			Console.WriteLine("[Downloadanager] QueueUrl Description : {0}", qurl.Description);
 
 			string url = qurl.Url;
+			string description = qurl.Description;
 			Download result = null;
 			bool exists = _repo.TryByUrl (url, out result);
 			if (exists) {
@@ -71,6 +74,7 @@ namespace DownloadManager.iOS
 			var insert = new Bo.Download {
 				State = Bo.State.Waiting,
 				Url = url,
+				ErrorDescription = description,
 				Written = 0,
 				Total = 0
 			};
@@ -167,7 +171,7 @@ namespace DownloadManager.iOS
 		public async void FinishedDownload (FinishedDownload finished) {
 
 			Console.WriteLine("[Downloadanager] FinishedDownload");
-			Console.WriteLine("[Downloadanager] FinishedDownload Id : {0}", finished.Id);
+			Console.WriteLine("[Downloadanager] FinishedDownload Id       : {0}", finished.Id);
 			Console.WriteLine("[Downloadanager] FinishedDownload Location : {0}", finished.Location);
 
 			Download download;
@@ -198,6 +202,11 @@ namespace DownloadManager.iOS
 				Url = download.Url,
 				Download = download
 			});
+			await _bus.SendAsync<NotifyFinish> (new NotifyFinish {
+				Url = download.Url,
+				Download = download,
+				FileLock = finished.FileLock
+			});
 		}
 
 		public async void CancelDownloads(CancelDownloads cancel) {
@@ -215,7 +224,6 @@ namespace DownloadManager.iOS
 			}
 
 			_repo.UpdateAll (queued);
-
 
 			foreach (var queue in queued) {
 				await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
@@ -256,7 +264,30 @@ namespace DownloadManager.iOS
 
 		}
 
-		public async void DownloadError(DownloadError error) {
+		public async void CheckStoppedDownload(CheckStoppedDownload check) {
+
+			Console.WriteLine("[Downloadanager] CheckStoppedDownload");
+
+			var running = _repo.ByState(new State[] { State.Downloading } );
+			foreach (var download in running) {
+				if (DateTime.Now - download.LastModified > TimeSpan.FromSeconds (60)) {
+					bool sucess = download.TryFail (0, TaskErrorEnum.Timeout, "CheckStoppedDownload");
+					if (sucess) { 
+						_repo.Update (download);
+						await _bus.SendAsync<NotifyProgress> (new NotifyProgress {
+							Url = download.Url,
+							Download = download
+						});
+
+					}
+
+				}
+			}
+
+
+		}
+
+		public void DownloadError(DownloadError error) {
 
 			Console.WriteLine("[Downloadanager] DownloadError");
 			Console.WriteLine("[Downloadanager] DownloadError Id          : {0}", error.Id);

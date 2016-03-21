@@ -44,7 +44,8 @@ namespace DownloadManager.iOS.Bo
 			_machine.Fire (Transition.Fail);
 			StatusCode = statuscode;
 			Error = (int)error;
-			Description = description;
+			ErrorDescription = description;
+			LastModified = DateTime.Now;
 			return true;
 		}
 
